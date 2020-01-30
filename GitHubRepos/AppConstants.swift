@@ -14,4 +14,6 @@ struct AppConstants {
     static let gitHubAPIURL = "https://api.github.com/users/clarissaj/repos"
     static let errorAlertMessage = "There was an error completing your request: \n"
     static let ok = "Ok"
+    
+    private init() {}
 }
