@@ -6,7 +6,7 @@
 //  Copyright © 2020 Jawaid. All rights reserved.
 //
 
-public class AppConstants {
+struct AppConstants {
     static let repository = "Repository"
     static let name = "name"
     static let ID = "id"

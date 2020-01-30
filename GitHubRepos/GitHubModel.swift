@@ -44,23 +44,49 @@ class GitHubModel {
     func addToCoreData(_ jsonData: [[String: Any]], _ fetchCompletionHandler: @escaping (_ error: Error?) -> Void, _ saveCompletionHandler: @escaping () -> Void) {
         
         persistentContainer?.performBackgroundTask({ backgroundContext in
-            jsonData.forEach { repo in
-                //if we find a dictionary that has both keys (meaning it is a repo json object), then create Repository object from it
-                if let name = repo[AppConstants.name] as? String, let ident = repo[AppConstants.ID] as? Int32 {
-                    let repo = Repository(context: backgroundContext)
-                    repo.name = name
-                    repo.ident = ident
-                }
+            for repo in jsonData {
+                let request = self.createFetchRequestToCheckIfRepoExistsLocally(repo)
+                request.returnsObjectsAsFaults = false
                 
                 do {
-                    try backgroundContext.save()
-                    //start fetch
-                    saveCompletionHandler()
+                    //check that repo isn't already saved locally
+                    let existingRepoCount = try self.persistentContainer?.viewContext.count(for: request)
+                    
+                    if existingRepoCount == 0 {
+                        //repo doesn't exist
+                        //if we find a dictionary object that has both keys (meaning it is a repo json object), then create Repository object from it
+                        if let name = repo[AppConstants.name] as? String, let ident = repo[AppConstants.ID] as? Int32 {
+                            let repo = Repository(context: backgroundContext)
+                            repo.name = name
+                            repo.ident = ident
+                        }
+                        
+                        do {
+                            try backgroundContext.save()
+                        } catch {
+                            fetchCompletionHandler(error)
+                        }
+                    } else {
+                        //repo exists, continue to next item in array
+                        continue
+                    }
                 } catch {
                     fetchCompletionHandler(error)
                 }
             }
+            //start fetch
+            saveCompletionHandler()
         })
+    }
+    
+    func createFetchRequestToCheckIfRepoExistsLocally(_ repo: [String: Any]) -> NSFetchRequest<NSFetchRequestResult> {
+        let request = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: Repository.self))
+        let ident = repo[AppConstants.ID] as? Int32 ?? 0
+        
+        request.predicate = NSPredicate(format: "ident == %d", ident)
+        request.returnsObjectsAsFaults = false
+        
+        return request
     }
     
     func fetchRepos(_ completionHandler: @escaping (_ error: Error?) -> Void) {
