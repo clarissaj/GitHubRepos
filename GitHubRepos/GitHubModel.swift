@@ -22,18 +22,18 @@ class GitHubModel {
         
         //make request to GitHub
         URLSession.shared.dataTask(with: gitHubReposURL) { data, response, error in
-            if let error = error {
+            guard let data = data else {
                 completionHandler(error)
                 return
             }
             
             do {
-                if let data = data, let json = try JSONSerialization.jsonObject(with: data) as? [[String: Any]] {
-                    //if we have data serialized then save to CoreData
-                    self.addToCoreData(json, completionHandler) {
-                        //if saved succesfully then fetch from memory
-                        self.fetchRepos(completionHandler)
-                    }
+                let repos = try JSONDecoder().decode([Repo].self, from: data)
+                
+                //if we have data serialized then save to CoreData
+                self.addToCoreData(repos, completionHandler) {
+                    //if saved succesfully then fetch from memory
+                    self.fetchRepos(completionHandler)
                 }
             } catch {
                 completionHandler(error)
@@ -41,10 +41,10 @@ class GitHubModel {
         }.resume()
     }
     
-    func addToCoreData(_ jsonData: [[String: Any]], _ fetchCompletionHandler: @escaping (_ error: Error?) -> Void, _ saveCompletionHandler: @escaping () -> Void) {
+    func addToCoreData(_ repos: [Repo], _ fetchCompletionHandler: @escaping (_ error: Error?) -> Void, _ saveCompletionHandler: @escaping () -> Void) {
         
         persistentContainer?.performBackgroundTask({ backgroundContext in
-            for repo in jsonData {
+            for repo in repos {
                 let request = self.createFetchRequestToCheckIfRepoExistsLocally(repo)
                 request.returnsObjectsAsFaults = false
                 
@@ -54,12 +54,10 @@ class GitHubModel {
                     
                     if existingRepoCount == 0 {
                         //repo doesn't exist
-                        //if we find a dictionary object that has both keys (meaning it is a repo json object), then create Repository object from it
-                        if let name = repo[AppConstants.name] as? String, let ident = repo[AppConstants.ID] as? Int32 {
-                            let repo = Repository(context: backgroundContext)
-                            repo.name = name
-                            repo.ident = ident
-                        }
+                        //so create Repository object from it
+                        let repoManagedObject = Repository(context: backgroundContext)
+                        repoManagedObject.name = repo.name
+                        repoManagedObject.ident = Int32(repo.identifier)
                         
                         do {
                             try backgroundContext.save()
@@ -79,22 +77,21 @@ class GitHubModel {
         })
     }
     
-    func createFetchRequestToCheckIfRepoExistsLocally(_ repo: [String: Any]) -> NSFetchRequest<NSFetchRequestResult> {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: Repository.self))
-        let ident = repo[AppConstants.ID] as? Int32 ?? 0
+    func createFetchRequestToCheckIfRepoExistsLocally(_ repo: Repo) -> NSFetchRequest<Repository> {
+        let request = NSFetchRequest<Repository>(entityName: String(describing: Repository.self))
         
-        request.predicate = NSPredicate(format: "ident == %d", ident)
+        request.predicate = NSPredicate(format: "ident == %d", repo.identifier)
         request.returnsObjectsAsFaults = false
         
         return request
     }
     
     func fetchRepos(_ completionHandler: @escaping (_ error: Error?) -> Void) {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: AppConstants.repository)
+        let request = NSFetchRequest<Repository>(entityName: AppConstants.repository)
         request.returnsObjectsAsFaults = false
         
         do {
-            if let results = try self.persistentContainer?.viewContext.fetch(request) as? [Repository] {
+            if let results = try self.persistentContainer?.viewContext.fetch(request) {
                 self.dataSource.repos = results
                 //reload table view with new data
                 completionHandler(nil)

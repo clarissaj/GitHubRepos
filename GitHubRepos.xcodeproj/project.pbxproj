@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6B04E26226085F460065865D /* Repo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B04E26126085F460065865D /* Repo.swift */; };
 		6B6A423223CD40B6001C79ED /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6A423123CD40B6001C79ED /* AppDelegate.swift */; };
 		6B6A423423CD40B6001C79ED /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6A423323CD40B6001C79ED /* SceneDelegate.swift */; };
 		6B6A423623CD40B6001C79ED /* GitHubViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B6A423523CD40B6001C79ED /* GitHubViewController.swift */; };
@@ -20,6 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6B04E26126085F460065865D /* Repo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repo.swift; sourceTree = "<group>"; };
 		6B6A422E23CD40B6001C79ED /* GitHubRepos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitHubRepos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B6A423123CD40B6001C79ED /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6B6A423323CD40B6001C79ED /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -45,6 +47,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6B04E26026085F2C0065865D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				6B04E26126085F460065865D /* Repo.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		6B6A422523CD40B6001C79ED = {
 			isa = PBXGroup;
 			children = (
@@ -64,6 +74,7 @@
 		6B6A423023CD40B6001C79ED /* GitHubRepos */ = {
 			isa = PBXGroup;
 			children = (
+				6B04E26026085F2C0065865D /* Models */,
 				6B6A423123CD40B6001C79ED /* AppDelegate.swift */,
 				6B6A423323CD40B6001C79ED /* SceneDelegate.swift */,
 				6B6A423523CD40B6001C79ED /* GitHubViewController.swift */,
@@ -153,6 +164,7 @@
 				6B6A423C23CD40B6001C79ED /* GitHubRepos.xcdatamodeld in Sources */,
 				6B6A423623CD40B6001C79ED /* GitHubViewController.swift in Sources */,
 				6B6A424B23CD4832001C79ED /* GitHubModel.swift in Sources */,
+				6B04E26226085F460065865D /* Repo.swift in Sources */,
 				6B6A424923CD4556001C79ED /* GitHubDataSource.swift in Sources */,
 				6B6A424D23CD66A6001C79ED /* AppConstants.swift in Sources */,
 				6B6A423223CD40B6001C79ED /* AppDelegate.swift in Sources */,
