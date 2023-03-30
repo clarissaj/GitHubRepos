@@ -57,7 +57,7 @@ class GitHubModel {
                         //so create Repository object from it
                         let repoManagedObject = Repository(context: backgroundContext)
                         repoManagedObject.name = repo.name
-                        repoManagedObject.ident = Int32(repo.identifier)
+                        repoManagedObject.identifier = Int32(repo.identifier)
                         
                         do {
                             try backgroundContext.save()
@@ -80,7 +80,7 @@ class GitHubModel {
     func createFetchRequestToCheckIfRepoExistsLocally(_ repo: Repo) -> NSFetchRequest<Repository> {
         let request = NSFetchRequest<Repository>(entityName: String(describing: Repository.self))
         
-        request.predicate = NSPredicate(format: "ident == %d", repo.identifier)
+        request.predicate = NSPredicate(format: "%K == %d", #keyPath(Repository.identifier), repo.identifier)
         request.returnsObjectsAsFaults = false
         
         return request

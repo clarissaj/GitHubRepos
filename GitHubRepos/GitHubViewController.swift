@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class GitHubViewController: UIViewController {
     @IBOutlet var reposTableView: UITableView!
@@ -36,6 +37,7 @@ class GitHubViewController: UIViewController {
         })
         
         reposTableView.dataSource = dataSource
+        reposTableView.delegate = self
     }
     
     func showAlert(_ error: Error) {
@@ -47,3 +49,13 @@ class GitHubViewController: UIViewController {
     }
 }
 
+// MARK: UITableViewDelegate
+
+extension GitHubViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let repo = Repo(repo: dataSource.repos[indexPath.row])
+        let detailView = RepoDetailView(repo: repo)
+        let hostingController = UIHostingController(rootView: detailView)
+        present(hostingController, animated: true)
+    }
+}
