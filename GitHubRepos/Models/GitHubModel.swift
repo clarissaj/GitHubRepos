@@ -28,6 +28,7 @@ class GitHubModel {
             }
             
             do {
+//                let json = String(data: data, encoding: .utf8) // uncomment for testing json
                 let repos = try JSONDecoder().decode([Repo].self, from: data)
                 
                 //if we have data serialized then save to CoreData
@@ -58,6 +59,7 @@ class GitHubModel {
                         let repoManagedObject = Repository(context: backgroundContext)
                         repoManagedObject.name = repo.name
                         repoManagedObject.identifier = Int32(repo.identifier)
+                        repoManagedObject.longDescription = repo.description
                         
                         do {
                             try backgroundContext.save()

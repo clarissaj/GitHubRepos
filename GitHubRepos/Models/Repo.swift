@@ -17,7 +17,7 @@ struct Repo: Decodable {
         case description
     }
     
-    init(name: String, identifier: Int, description: String?) {
+    init(name: String, identifier: Int, description: String) {
         self.name = name
         self.identifier = identifier
         self.description = description
@@ -26,6 +26,6 @@ struct Repo: Decodable {
     init(repo: Repository) {
         name = repo.name ?? "No Repo Name"
         identifier = Int(repo.identifier)
-        description = ""
+        description = repo.longDescription
     }
 }

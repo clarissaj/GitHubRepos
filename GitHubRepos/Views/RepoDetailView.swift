@@ -15,8 +15,11 @@ struct RepoDetailView: View {
     var body: some View {
         VStack {
             Text(repo.name)
-            Text(repo.description ?? "")
+                .padding(.bottom, 8)
+            Text(repo.description ?? "No Description Provided")
         }
+        .multilineTextAlignment(.center)
+        .padding()
     }
 }
 
